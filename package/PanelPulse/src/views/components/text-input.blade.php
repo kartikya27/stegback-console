@@ -2,7 +2,7 @@
     'name' => '', // The name of the input field
     'type' => 'text', // The input type (default: text)
     'class' => '', // Additional classes for styling
-    'value' => old($name, $value), // Preserve old input value
+    'value' => old($name??'', $value??''), // Preserve old input value
     'required' => false, // Whether the input is required
     'label' => '', // Label for the input
     'placeholder' => '', // Placeholder text

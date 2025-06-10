@@ -21,6 +21,7 @@
                         <tr>
                             <th scope="col">File name</th>
                             <th scope="col">Status</th>
+                            <th scope="col">Type</th>
                             <th scope="col">Date added</th>
                             <th scope="col">Size</th>
                             <th scope="col">Action</th>
@@ -45,6 +46,9 @@
                                                 {{$slider['status'] ? 'Active' : 'Draft'}}
                                             </span>
                                         </div>
+                                    </td>
+                                    <td class="align-middle">
+                                        {{ $slider['type'] == 'hero-banner' ? 'Hero Slider' : 'Banner' }}
                                     </td>
                                     <td class="align-middle">
                                         {{ $slider->formatted_date }}

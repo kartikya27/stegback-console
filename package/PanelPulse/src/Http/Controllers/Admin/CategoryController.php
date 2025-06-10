@@ -138,6 +138,12 @@ class CategoryController extends Controller
         }
 
         $category->name = $request->name;
+        $category->header = $request->header;
+        $category->slider = $request->slider;
+        $category->drawer = $request->drawer;
+        $category->best_category = $request->best_category;
+        $category->department = $request->department;
+
         $category->save();
 
         return redirect()->route('category.edit',[$request->id,$slug]);

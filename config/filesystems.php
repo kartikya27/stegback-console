@@ -55,6 +55,14 @@ return [
             'use_path_style_endpoint' => env('AWS_USE_PATH_STYLE_ENDPOINT', false),
             'throw' => false,
         ],
+        'bunnycdn' => [
+            'driver' => 'bunnycdn',
+            'storage_zone' => env('BUNNYCDN_STORAGE_ZONE','portal-stegback/stegback-shop'),
+            'url' => env('BUNNY_PUBLIC_URL','https://portal-stegback.b-cdn.net/stegback-shop'),
+            'pull_zone' => env('BUNNYCDN_PULL_ZONE'),
+            'api_key' => env('BUNNYCDN_API_KEY','c5ceccca-5cd1-4f07-b4c57b15288f-d2b9-4675'),
+            'region' => env('BUNNYCDN_REGION', \PlatformCommunity\Flysystem\BunnyCDN\BunnyCDNRegion::DEFAULT)
+        ],
 
     ],
 

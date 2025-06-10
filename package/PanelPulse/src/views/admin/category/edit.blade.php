@@ -47,10 +47,10 @@
     <div class="container">
         <div class="row">
             <div class="col-4 pt-3">
-                <h3 class="info-cont-heading mb-3">Total 4 Product under this category</h3>
-                <p class="subtext1">Total 85 child category under this category</p>
+                <h3 class="info-cont-heading mb-3">Total ** Product under this category</h3>
+                <p class="subtext1">Total ** child category under this category</p>
                 <h3 class="info-cont-heading mb-3">Most Saleable product</h3>
-                <p class="subtext1">Test Product name</p>
+                <p class="subtext1">(Product name)</p>
             </div>
             <div class="col-8">
                 <div class="container info-cont">
@@ -68,6 +68,14 @@
 
                             <div class="col-md-6 mb-3">
                                 <x-PanelPulse::text-input label="Name" name="name" value="{!! $category['name'] !!}" required/>
+                            </div>
+
+                            <div class="col-md-12 mb-3 justify-content-between d-flex">
+                                <x-PanelPulse::checkbox-input label="Header Menu" name="header"  :checked="$category['header'] == 1"/>
+                                <x-PanelPulse::checkbox-input label="Slider Menu" name="slider"  :checked="$category['slider'] == 1"/>
+                                <x-PanelPulse::checkbox-input label="Side Offcanvas Menu" name="drawer"  :checked="$category['drawer'] == 1"/>
+                                <x-PanelPulse::checkbox-input label="Best in Category Menu" name="best_category"  :checked="$category['best_category'] == 1"/>
+                                <x-PanelPulse::checkbox-input label="Shop by Department Menu" name="department"  :checked="$category['department'] == 1"/>
                             </div>
 
                             <div class="col-12 mb-3">

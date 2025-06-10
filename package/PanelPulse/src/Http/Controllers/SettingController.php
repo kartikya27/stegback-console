@@ -154,4 +154,28 @@ class SettingController extends Controller
         $theme = ModelsThemeSetting::find($id);
         return view('PanelPulse::admin.settings.theme-setting', ['theme' => $theme]);
     }
+
+    // Return theme data as JSON for AJAX modal
+    public function theme_setting_json($id)
+    {
+        $theme = ModelsThemeSetting::find($id);
+        if (!$theme) {
+            return response()->json(['error' => 'Theme not found'], 404);
+        }
+        return response()->json($theme);
+    }
+
+    // Update theme via AJAX
+    public function theme_setting_update(Request $request, $id)
+    {
+        $theme = ModelsThemeSetting::find($id);
+        if (!$theme) {
+            return response()->json(['success' => false, 'message' => 'Theme not found']);
+        }
+        $theme->value = $request->input('value');
+        $fields = $request->input('fields', []);
+        $theme->fields = $fields;
+        $theme->save();
+        return response()->json(['success' => true]);
+    }
 }

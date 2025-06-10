@@ -43,6 +43,19 @@
                     </div>
                 </div>
             </div>
+    
+            <div class="info-cont p-3">
+                Banner Slider
+                <div class="custom-control custom-checkbox">
+
+                    <div class="mt-2">
+                        <x-PanelPulse::radio-input class="me-2" type="radio" name="type" label="Hero Slider" value="{{$slider['type'] == 'hero-banner'}}" :checked="$slider['type'] == 'hero-banner'" />
+                    </div>
+                    <div class="mt-2">
+                        <x-PanelPulse::radio-input type="radio" class="me-2" name="type" label="Banner" value="{{$slider['type'] == 'banner'}}" :checked="$slider['type'] == 'banner'" />
+                    </div>
+                </div>
+            </div>
 
             <div class="col-12 d-flex justify-content-end">
                 <a class="btn btn-sm rounded-3 btn-danger bg-danger text-white px-3 me-2" href="{{route('slider.list')}}">Cancel</a>

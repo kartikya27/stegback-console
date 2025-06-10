@@ -91,6 +91,10 @@ Route::middleware(['web', 'auth'])->group(function () {
         //? Theme Setting
         Route::get('/settings/theme', [SettingController::class, 'theme'])->name('admin.settings.theme');
         Route::get('/settings/theme/{id}', [SettingController::class, 'theme_setting'])->name('admin.settings.theme.view');
+
+        Route::get('/settings/theme/json/{id}', [SettingController::class, 'theme_setting_json'])->name('admin.settings.theme.json');
+        Route::post('/settings/theme/update/{id}', [SettingController::class, 'theme_setting_update'])->name('admin.settings.theme.update');
+
         // Route::post('/settings/payments/methods/add', [SettingController::class, 'payments_method_add'])->name('admin.settings.payments.methods.add');
         // Route::post('/settings/payments/methods/update', [SettingController::class, 'payments_method_update'])->name('admin.settings.payments.methods.update');
         // Route::delete('/settings/payments/methods/delete', [SettingController::class, 'payments_method_delete'])->name('admin.settings.payments.methods.delete');

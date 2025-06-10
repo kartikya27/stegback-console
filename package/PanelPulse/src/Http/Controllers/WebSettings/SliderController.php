@@ -89,11 +89,14 @@ class SliderController extends Controller
         $validatedData = $request->validate([
             'link' => 'required|url',
             'visiblity' => 'required|boolean',
+            'type' => 'required|string',
             'banner' => 'nullable|array',
             'banner.*' => 'file|mimes:jpeg,png,jpg|max:5120',
             'mobile' => 'nullable|array',
             'mobile.*' => 'file|mimes:jpeg,png,jpg|max:5120',
         ]);
+
+        // dd($validatedData);
 
         try {
             $bannerUrls = [];
@@ -112,6 +115,7 @@ class SliderController extends Controller
                 $slider = Slider::create([
                     'link' => $validatedData['link'],
                     'status' => $validatedData['visiblity'],
+                    'type' => $validatedData['type'],
                     'desktop_img' => $bannerUrls,
                     'mobile_img' => $mobileUrls,
                 ]);
@@ -119,6 +123,7 @@ class SliderController extends Controller
             return redirect()->route('slider.edit',[$slider->id])->with('success', 'Slider added successfully!');
 
         } catch (\Exception $e) {
+            dd($e);
             return redirect()->back()->with('error', $e->getMessage());
         }
 
