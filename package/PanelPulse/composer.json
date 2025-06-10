@@ -1,0 +1,20 @@
+{
+    "name": "kartikey/panel-pulse",
+    "description": "nothing yes",
+    "type": "project",
+    "autoload": {
+
+        "psr-4": {
+            "Kartikey\\PanelPulse\\": "src/"
+        },
+        "files": [
+            "src/app/CommonHelper.php"
+        ]
+    },
+    "authors": [
+        {
+            "name": "Kartik Maandothiya"
+        }
+    ],
+    "require": {}
+}
