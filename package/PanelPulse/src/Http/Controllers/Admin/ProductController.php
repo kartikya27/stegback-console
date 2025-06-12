@@ -32,21 +32,34 @@ class ProductController extends Controller
     
     public function toggleXmlFeed($id)
     {
-        $existing = ProductSetting::where('product_id', $id)
-                    ->where('key', 'xml-enabled')
-                    ->first();
-    
-        if ($existing) {
-            $existing->delete();
-            return redirect()->back()->with('success', 'XML feed removed successfully');
-        } else {
-            ProductSetting::create([
-                'product_id' => $id,
-                'key'        => 'xml-enabled',
-                'value'      => 1,
-            ]);
-    
-            return redirect()->back()->with('success', 'XML feed added successfully');
+        try {
+            $existing = ProductSetting::where('product_id', $id)
+                        ->where('key', 'xml-enabled')
+                        ->first();
+        
+            if ($existing) {
+                $existing->delete();
+                return response()->json([
+                    'success' => true,
+                    'message' => 'XML feed removed successfully'
+                ]);
+            } else {
+                ProductSetting::create([
+                    'product_id' => $id,
+                    'key'        => 'xml-enabled',
+                    'value'      => 1,
+                ]);
+        
+                return response()->json([
+                    'success' => true,
+                    'message' => 'XML feed added successfully'
+                ]);
+            }
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to update XML feed status'
+            ], 500);
         }
     }
     
@@ -107,6 +120,9 @@ class ProductController extends Controller
             'code' => 'xml-report-url',
             'value' => $reportUrl,
         ]);
+
+
+        $products = ProductSetting::truncate();
 
         return redirect()->back();
         // Step 5: Return the XML response

@@ -168,33 +168,45 @@
         $('#productsCollapse').collapse('show');
 
         $(document).ready(function($) {
-            $(".table-row").click(function() {
-                window.document.location = $(this).data("href");
+            // Prevent row click when clicking checkbox
+            $('.xml-feed-toggle').on('click', function(e) {
+                e.stopPropagation();
+            });
+
+            // Handle row click for other areas
+            $(".table-row").click(function(e) {
+                if (!$(e.target).is('.xml-feed-toggle')) {
+                    window.document.location = $(this).data("href");
+                }
             });
 
             // Handle XML feed toggle
             $('.xml-feed-toggle').on('change', function() {
                 var productId = $(this).data('id');
                 var isChecked = $(this).is(':checked');
+                var $checkbox = $(this);
                 
-                $.ajax({
-                    url: '/admin/products/xml-feed-add/' + productId,
+                fetch('/admin/products/xml-feed-add/' + productId, {
                     method: 'GET',
-                    success: function(response) {
-                        if (response.success) {
-                            // Optional: Show success message
-                            toastr.success('XML feed status updated successfully');
-                        } else {
-                            // Revert checkbox if failed
-                            $(this).prop('checked', !isChecked);
-                            toastr.error('Failed to update XML feed status');
-                        }
-                    },
-                    error: function() {
-                        // Revert checkbox if failed
-                        $(this).prop('checked', !isChecked);
-                        toastr.error('Error updating XML feed status');
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest',
+                        'Accept': 'application/json'
                     }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        // toastr.success(data.message);
+                    } else {
+                        // Revert checkbox if failed
+                        $checkbox.prop('checked', !isChecked);
+                        // toastr.error(data.message || 'Failed to update XML feed status');
+                    }
+                })
+                .catch(error => {
+                    // Revert checkbox if failed
+                    $checkbox.prop('checked', !isChecked);
+                    // toastr.error('Error updating XML feed status');
                 });
             });
         });
