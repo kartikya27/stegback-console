@@ -2,13 +2,13 @@
 
 namespace Kartikey\PanelPulse\Models;
 
-use App\Models\User as ModelsUser;
 use Illuminate\Database\Eloquent\Model;
-use Kartikey\PanelPulse\Models\User;
+use App\Models\User as ModelsUser;
+use Kartikey\PanelPulse\Models\Product;
 
 class ProductRating extends Model
 {
-    protected $table = PRODUCT_REVIEW_TABLE;
+    protected $table = 'product_reviews';
 
     protected $guarded = ['id'];
 

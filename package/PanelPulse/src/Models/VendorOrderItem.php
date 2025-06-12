@@ -13,7 +13,7 @@ class VendorOrderItem extends Model
 {
     use SoftDeletes;
 
-    protected $table = VENDOR_ORDER_ITEM_TABLE;
+    // protected $table = VENDOR_ORDER_ITEM_TABLE;
     protected $guarded = ['id'];
 
     public function vendorOrder()

@@ -49,6 +49,11 @@ class Product extends Model
         return $this->hasMany(ProductRating::class, 'product_id');
     }
 
+    public function xml_data()
+    {
+        return $this->hasOne(ProductSetting::class, 'product_id', 'id')->where('key', 'xml-enabled');
+    }
+
 }
 
 

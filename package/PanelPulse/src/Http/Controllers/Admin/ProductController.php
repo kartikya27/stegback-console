@@ -19,7 +19,7 @@ class ProductController extends Controller
 
     public function index()
     {
-        $products =  Product::with('descriptions', 'images','prices','sellers')->get()->toArray();
+        $products =  Product::with('descriptions', 'images','prices','sellers','xml_data')->get()->toArray();
 
         return view('PanelPulse::admin.products.list',['products' => $products]);
     }
@@ -29,6 +29,27 @@ class ProductController extends Controller
         Product::findOrFail($id)->delete();
         return redirect()->back();
     }
+    
+    public function toggleXmlFeed($id)
+    {
+        $existing = ProductSetting::where('product_id', $id)
+                    ->where('key', 'xml-enabled')
+                    ->first();
+    
+        if ($existing) {
+            $existing->delete();
+            return redirect()->back()->with('success', 'XML feed removed successfully');
+        } else {
+            ProductSetting::create([
+                'product_id' => $id,
+                'key'        => 'xml-enabled',
+                'value'      => 1,
+            ]);
+    
+            return redirect()->back()->with('success', 'XML feed added successfully');
+        }
+    }
+    
 
     public function xmlFeeds()
     {
@@ -61,8 +82,6 @@ class ProductController extends Controller
 
     public function genrateXML()
     {
-
-
         // $products = ProductSetting::where(['key' => 'xml-enabled', 'value' => 1])->with('products','products.images','products.descriptions','products.prices')->get();
 
         $products = ProductSetting::where(['key' => 'xml-enabled', 'value' => 1])

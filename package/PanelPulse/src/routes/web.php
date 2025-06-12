@@ -56,7 +56,10 @@ Route::middleware(['web', 'auth'])->group(function () {
             Route::controller(ProductController::class)->group(function(){
             Route::get('/list','index')->name('products');
             Route::get('/view/{id}','view')->name('product.view');
+
             Route::get('/delete/{id}','delete')->name('product.delete');
+
+            Route::get('/xml-feed-add/{id}','toggleXmlFeed')->name('product.xml.toggle');
 
             Route::get('/xml-feeds','xmlFeeds')->name('products.xml');
             Route::get('/genrate-report','genrateXML')->name('products.genrateNewXml');

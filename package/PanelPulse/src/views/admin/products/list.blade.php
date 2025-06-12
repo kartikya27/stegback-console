@@ -144,6 +144,13 @@
                                             <a href="{{route('admin.product.delete',[$product['id']])}}" class="btn-secondary btn-sm btn  rounded px-2 small text-danger border-1 border-secondary border-opacity-25" style="font-size: 0.75rem; box-shadow:0.5px 0.5px 0rem 0px rgb(0 0 0 / 43%) !important;">
                                                 Delete
                                             </a>
+                                            <div class="item-align-center d-flex">
+                                                <input type="checkbox" name="xml" value="{{$product['id']}}" 
+                                                    class="xml-feed-toggle" 
+                                                    data-id="{{$product['id']}}"
+                                                    {{ isset($product['xml_data']) && $product['xml_data'] ? 'checked' : '' }}>
+                                                <label class="m-1">XML</label>
+                                            </div>
                                         </div>
                                     </td>
                                 </tr>
@@ -163,6 +170,32 @@
         $(document).ready(function($) {
             $(".table-row").click(function() {
                 window.document.location = $(this).data("href");
+            });
+
+            // Handle XML feed toggle
+            $('.xml-feed-toggle').on('change', function() {
+                var productId = $(this).data('id');
+                var isChecked = $(this).is(':checked');
+                
+                $.ajax({
+                    url: '/admin/products/xml-feed-add/' + productId,
+                    method: 'GET',
+                    success: function(response) {
+                        if (response.success) {
+                            // Optional: Show success message
+                            toastr.success('XML feed status updated successfully');
+                        } else {
+                            // Revert checkbox if failed
+                            $(this).prop('checked', !isChecked);
+                            toastr.error('Failed to update XML feed status');
+                        }
+                    },
+                    error: function() {
+                        // Revert checkbox if failed
+                        $(this).prop('checked', !isChecked);
+                        toastr.error('Error updating XML feed status');
+                    }
+                });
             });
         });
 
