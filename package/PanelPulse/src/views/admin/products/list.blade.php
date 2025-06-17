@@ -1,6 +1,7 @@
 @extends('PanelPulse::admin.layout.header')
 @section('title', 'Products | ' . env('APP_NAME'))
 @section('style')
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
     <style>
         .admin-menu.settings {
             background-color: #eaeaea;
@@ -92,6 +93,24 @@
         .tree summary a {
             visibility: hidden;
         }
+
+        .select2-container {
+            width: 100% !important;
+        }
+
+        .select2-container--default .select2-selection--single {
+            height: 38px;
+            border: 1px solid #ced4da;
+            border-radius: 0.25rem;
+        }
+
+        .select2-container--default .select2-selection--single .select2-selection__rendered {
+            line-height: 38px;
+        }
+
+        .select2-container--default .select2-selection--single .select2-selection__arrow {
+            height: 36px;
+        }
     </style>
 @endsection
 @section('content')
@@ -110,25 +129,29 @@
                     <div class="card">
                         <div class="card-body">
                             <form id="filter-form" class="row g-3">
-                                <div class="col-md-4">
+                                <div class="col-md-3">
+                                    <label for="product-name-filter" class="form-label">Product Name</label>
+                                    <input type="text" class="form-control" id="product-name-filter" placeholder="Search by product name">
+                                </div>
+                                <div class="col-md-3">
                                     <label for="category-filter" class="form-label">Category</label>
-                                    <select class="form-select" id="category-filter" name="category">
+                                    <select class="form-select select2" id="category-filter" name="category">
                                         <option value="">All Categories</option>
                                         @foreach($categories as $category)
                                             <option value="{{ $category['id'] }}">{{ $category['name'] }}</option>
                                         @endforeach
                                     </select>
                                 </div>
-                                <div class="col-md-4">
+                                <div class="col-md-3">
                                     <label for="seller-filter" class="form-label">Seller</label>
-                                    <select class="form-select" id="seller-filter" name="seller">
+                                    <select class="form-select select2" id="seller-filter" name="seller">
                                         <option value="">All Sellers</option>
                                         @foreach($sellers as $seller)
                                             <option value="{{ $seller['id'] }}">{{ $seller['name'] }}</option>
                                         @endforeach
                                     </select>
                                 </div>
-                                <div class="col-md-4 d-flex align-items-end">
+                                <div class="col-md-3 d-flex align-items-end">
                                     <button type="submit" class="btn btn-primary me-2">Filter</button>
                                     <button type="reset" class="btn btn-secondary">Reset</button>
                                 </div>
@@ -196,25 +219,37 @@
     </div>
 @endsection
 @section('scriptContent')
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
     <script>
         $('#productsCollapse').collapse('show');
 
         $(document).ready(function($) {
+            // Initialize Select2
+            $('.select2').select2({
+                placeholder: "Search...",
+                allowClear: true
+            });
+
             // Filter functionality
             $('#filter-form').on('submit', function(e) {
                 e.preventDefault();
                 var category = $('#category-filter').val();
                 var seller = $('#seller-filter').val();
+                var productName = $('#product-name-filter').val().toLowerCase();
 
                 $('.table-row').each(function() {
                     var rowCategory = $(this).data('category');
                     var rowSeller = $(this).data('seller');
+                    var rowProductName = $(this).find('td:eq(0)').text().toLowerCase();
                     var show = true;
 
                     if (category && rowCategory != category) {
                         show = false;
                     }
                     if (seller && rowSeller != seller) {
+                        show = false;
+                    }
+                    if (productName && !rowProductName.includes(productName)) {
                         show = false;
                     }
 
@@ -225,6 +260,8 @@
             // Reset filters
             $('#filter-form').on('reset', function() {
                 $('.table-row').show();
+                $('.select2').val('').trigger('change');
+                $('#product-name-filter').val('');
             });
 
             // Prevent row click when clicking checkbox
