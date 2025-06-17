@@ -4,6 +4,7 @@ namespace Kartikey\PanelPulse\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use Carbon\Carbon;
+use Illuminate\Http\Request;
 use Kartikey\PanelPulse\Models\Product;
 use Kartikey\PanelPulse\Models\ProductSetting;
 use Kartikey\PanelPulse\Models\CoreConfig as ModelsCoreConfig;
@@ -29,7 +30,16 @@ class ProductController extends Controller
         Product::findOrFail($id)->delete();
         return redirect()->back();
     }
-    
+    public function toggleXmlFeedAllClear(Request $request)
+    {
+        ProductSetting::truncate();
+        return response()->json([
+            'success' => true,
+            'message' => 'XML feed cleared successfully'
+        ]);
+    }
+
+
     public function toggleXmlFeed($id)
     {
         try {
@@ -61,6 +71,25 @@ class ProductController extends Controller
                 'message' => 'Failed to update XML feed status'
             ], 500);
         }
+    }
+
+    public function toggleXmlFeedAll(Request $request)
+    {
+        $productIds = $request->input('product_ids');
+        if (!is_array($productIds)) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Invalid product IDs format'
+            ], 400);
+        }
+        
+        foreach ($productIds as $productId) {
+            $this->toggleXmlFeed($productId);
+        }
+        return response()->json([
+            'success' => true,
+            'message' => 'XML feed added successfully'
+        ]);
     }
     
 

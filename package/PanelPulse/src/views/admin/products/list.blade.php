@@ -113,6 +113,15 @@
                         href="#open" role="tab" aria-controls="pills-open" aria-selected="false">Drafted</a>
                 </li>
             </ul>
+
+            <div class="d-flex align-items-end justify-content-end gap-2">
+                <input type="checkbox" id="select-all-xml" class="xml-feed-toggle">
+                <label class="">Seelct All</label>
+                <button type="button" id="clear-all-xml" class="btn btn-sm btn-outline-danger">
+                    Clear All XML
+                </button>
+            </div>
+
             <div class="tab-content" id="pills-tabContent">
                 <div class="tab-pane fade show active" id="all" role="tabpanel" aria-labelledby="pills-all-tab">
                     <table class="table">
@@ -124,7 +133,11 @@
                                 <th scope="col" class="text-center">Sku</th>
                                 <th scope="col" class="text-center">Qty</th>
                                 <th scope="col" class="text-center">Seller</th>
-                                <th scope="col" class="text-center">Action</th>
+
+                                <th scope="col" class="text-center">Action
+                                
+
+                                </th>
                             </tr>
                         </thead>
                         <tbody>
@@ -180,11 +193,95 @@
                 }
             });
 
+            // Handle select all checkbox
+            $('#select-all-xml').on('change', function() {
+                var isChecked = $(this).is(':checked');
+                $('.xml-feed-toggle').not(this).prop('checked', isChecked);
+                
+                // Get all product IDs
+                var productIds = [];
+                $('.xml-feed-toggle').not(this).each(function() {
+                    productIds.push($(this).data('id'));
+                });
+
+                // Send POST request for all products
+                fetch('/admin/products/xml-feed-add', {
+                    method: 'POST',
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest',
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    },
+                    body: JSON.stringify({
+                        product_ids: productIds
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        // toastr.success(data.message);
+                    } else {
+                        // Revert all checkboxes if failed
+                        $('.xml-feed-toggle').not(this).prop('checked', !isChecked);
+                        // toastr.error(data.message || 'Failed to update XML feed status');
+                    }
+                })
+                .catch(error => {
+                    // Revert all checkboxes if failed
+                    $('.xml-feed-toggle').not(this).prop('checked', !isChecked);
+                    // toastr.error('Error updating XML feed status');
+                });
+            });
+
+            // Handle clear all button
+            $('#clear-all-xml').on('click', function() {
+                // Uncheck all checkboxes
+                $('.xml-feed-toggle').prop('checked', false);
+                
+                // Get all product IDs
+                var productIds = [];
+                $('.xml-feed-toggle').not('#select-all-xml').each(function() {
+                    productIds.push($(this).data('id'));
+                });
+
+                // Send POST request to remove all XML feeds
+                fetch('/admin/products/xml-feed-add-clear', {
+                    method: 'get',
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest',
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    },
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        // toastr.success(data.message);
+                    } else {
+                        // Revert checkboxes if failed
+                        $('.xml-feed-toggle').prop('checked', true);
+                        // toastr.error(data.message || 'Failed to clear XML feed status');
+                    }
+                })
+                .catch(error => {
+                    // Revert checkboxes if failed
+                    $('.xml-feed-toggle').prop('checked', true);
+                    // toastr.error('Error clearing XML feed status');
+                });
+            });
+
             // Handle XML feed toggle
             $('.xml-feed-toggle').on('change', function() {
                 var productId = $(this).data('id');
                 var isChecked = $(this).is(':checked');
                 var $checkbox = $(this);
+                
+                // Skip API call for select all checkbox
+                if ($(this).attr('id') === 'select-all-xml') {
+                    return;
+                }
                 
                 fetch('/admin/products/xml-feed-add/' + productId, {
                     method: 'GET',

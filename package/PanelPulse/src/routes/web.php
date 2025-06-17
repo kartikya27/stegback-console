@@ -60,6 +60,8 @@ Route::middleware(['web', 'auth'])->group(function () {
             Route::get('/delete/{id}','delete')->name('product.delete');
 
             Route::get('/xml-feed-add/{id}','toggleXmlFeed')->name('product.xml.toggle');
+            Route::post('/xml-feed-add','toggleXmlFeedAll')->name('product.xml.toggle.all');
+            Route::get('/xml-feed-add-clear','toggleXmlFeedAllClear')->name('product.xml.toggle.all.clear');
 
             Route::get('/xml-feeds','xmlFeeds')->name('products.xml');
             Route::get('/genrate-report','genrateXML')->name('products.genrateNewXml');
