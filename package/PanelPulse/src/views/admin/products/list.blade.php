@@ -105,73 +105,92 @@
     </div>
 
         <div class="container info-cont">
-            <ul class="nav nav-pills mb-3" id="pills-tab" role="tablist">
-                <li class="nav-item" role="presentation"> <a class="nav-link active" id="pills-all-tab" data-toggle="pill"
-                        href="#all" role="tab" aria-controls="pills-all" aria-selected="true">All</a>
-                </li>
-                <li class="nav-item" role="presentation"> <a class="nav-link" id="pills-open-tab" data-toggle="pill"
-                        href="#open" role="tab" aria-controls="pills-open" aria-selected="false">Drafted</a>
-                </li>
-            </ul>
+            <div class="row mb-4">
+                <div class="col-md-12">
+                    <div class="card">
+                        <div class="card-body">
+                            <form id="filter-form" class="row g-3">
+                                <div class="col-md-4">
+                                    <label for="category-filter" class="form-label">Category</label>
+                                    <select class="form-select" id="category-filter" name="category">
+                                        <option value="">All Categories</option>
+                                        @foreach($categories as $category)
+                                            <option value="{{ $category['id'] }}">{{ $category['name'] }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                                <div class="col-md-4">
+                                    <label for="seller-filter" class="form-label">Seller</label>
+                                    <select class="form-select" id="seller-filter" name="seller">
+                                        <option value="">All Sellers</option>
+                                        @foreach($sellers as $seller)
+                                            <option value="{{ $seller['id'] }}">{{ $seller['name'] }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                                <div class="col-md-4 d-flex align-items-end">
+                                    <button type="submit" class="btn btn-primary me-2">Filter</button>
+                                    <button type="reset" class="btn btn-secondary">Reset</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
-            <div class="d-flex align-items-end justify-content-end gap-2">
+            <div class="d-flex align-items-end justify-content-end gap-2 mb-3">
                 <input type="checkbox" id="select-all-xml" class="xml-feed-toggle">
-                <label class="">Seelct All</label>
+                <label class="">Select All</label>
                 <button type="button" id="clear-all-xml" class="btn btn-sm btn-outline-danger">
                     Clear All XML
                 </button>
             </div>
 
-            <div class="tab-content" id="pills-tabContent">
-                <div class="tab-pane fade show active" id="all" role="tabpanel" aria-labelledby="pills-all-tab">
-                    <table class="table">
-                        <thead>
-                            <tr>
-                                <th scope="col">Sr No</th>
-                                <th scope="col">Product Name</th>
-                                <th scope="col">Price</th>
-                                <th scope="col" class="text-center">Sku</th>
-                                <th scope="col" class="text-center">Qty</th>
-                                <th scope="col" class="text-center">Seller</th>
-
-                                <th scope="col" class="text-center">Action
-                                
-
-                                </th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach ($products as $product)
-                                <tr class="table-row">
-                                    <th scope="row">#{{ $product['id'] }}</th>
-                                    <td>{{$product['descriptions'][0]['product_name']}}</td>
-                                    <td>{{$product['prices'][0]['regular_price']}}</td>
-                                    <td>{{$product['sku']}}</td>
-                                    <td>{{$product['stock']}}</td>
-                                    <td>{{$product['sellers']['seller_name']}}</td>
-                                    <td  class="align-middle">
-                                        <div class="d-flex gap-2">
-                                            <a href="{{route('admin.product.view',[$product['id']])}}" class="btn-primary btn-sm btn  rounded px-2 small text-white border-1 border-primary border-opacity-25" style="font-size: 0.75rem; box-shadow:0.5px 0.5px 0rem 0px rgb(0 0 0 / 43%) !important;">
-                                                View
-                                            </a>
-                                            <a href="{{route('admin.product.delete',[$product['id']])}}" class="btn-secondary btn-sm btn  rounded px-2 small text-danger border-1 border-secondary border-opacity-25" style="font-size: 0.75rem; box-shadow:0.5px 0.5px 0rem 0px rgb(0 0 0 / 43%) !important;">
-                                                Delete
-                                            </a>
-                                            <div class="item-align-center d-flex">
-                                                <input type="checkbox" name="xml" value="{{$product['id']}}" 
-                                                    class="xml-feed-toggle" 
-                                                    data-id="{{$product['id']}}"
-                                                    {{ isset($product['xml_data']) && $product['xml_data'] ? 'checked' : '' }}>
-                                                <label class="m-1">XML</label>
-                                            </div>
+            <div class="table-responsive">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th scope="col">Sr No</th>
+                            <th scope="col">Product Name</th>
+                            <th scope="col">Price</th>
+                            <th scope="col" class="text-center">Sku</th>
+                            <th scope="col" class="text-center">Qty</th>
+                            <th scope="col" class="text-center">Seller</th>
+                            <th scope="col" class="text-center">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach ($products as $product)
+                            <tr class="table-row" 
+                                data-category="{{ $product['product_categories'][0]['id'] ?? '' }}"
+                                data-seller="{{ $product['sellers']['id'] ?? '' }}">
+                                <th scope="row">#{{ $product['id'] }}</th>
+                                <td>{{$product['descriptions'][0]['product_name']}}</td>
+                                <td>{{$product['prices'][0]['regular_price']}}</td>
+                                <td>{{$product['sku']}}</td>
+                                <td>{{$product['stock']}}</td>
+                                <td>{{$product['sellers']['seller_name']}}</td>
+                                <td class="align-middle">
+                                    <div class="d-flex gap-2">
+                                        <a href="{{route('admin.product.view',[$product['id']])}}" class="btn-primary btn-sm btn rounded px-2 small text-white border-1 border-primary border-opacity-25" style="font-size: 0.75rem; box-shadow:0.5px 0.5px 0rem 0px rgb(0 0 0 / 43%) !important;">
+                                            View
+                                        </a>
+                                        <a href="{{route('admin.product.delete',[$product['id']])}}" class="btn-secondary btn-sm btn rounded px-2 small text-danger border-1 border-secondary border-opacity-25" style="font-size: 0.75rem; box-shadow:0.5px 0.5px 0rem 0px rgb(0 0 0 / 43%) !important;">
+                                            Delete
+                                        </a>
+                                        <div class="item-align-center d-flex">
+                                            <input type="checkbox" name="xml" value="{{$product['id']}}" 
+                                                class="xml-feed-toggle" 
+                                                data-id="{{$product['id']}}"
+                                                {{ isset($product['xml_data']) && $product['xml_data'] ? 'checked' : '' }}>
+                                            <label class="m-1">XML</label>
                                         </div>
-                                    </td>
-                                </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
-                </div>
-
+                                    </div>
+                                </td>
+                            </tr>
+                        @endforeach
+                    </tbody>
+                </table>
             </div>
         </div>
     </div>
@@ -181,6 +200,33 @@
         $('#productsCollapse').collapse('show');
 
         $(document).ready(function($) {
+            // Filter functionality
+            $('#filter-form').on('submit', function(e) {
+                e.preventDefault();
+                var category = $('#category-filter').val();
+                var seller = $('#seller-filter').val();
+
+                $('.table-row').each(function() {
+                    var rowCategory = $(this).data('category');
+                    var rowSeller = $(this).data('seller');
+                    var show = true;
+
+                    if (category && rowCategory != category) {
+                        show = false;
+                    }
+                    if (seller && rowSeller != seller) {
+                        show = false;
+                    }
+
+                    $(this).toggle(show);
+                });
+            });
+
+            // Reset filters
+            $('#filter-form').on('reset', function() {
+                $('.table-row').show();
+            });
+
             // Prevent row click when clicking checkbox
             $('.xml-feed-toggle').on('click', function(e) {
                 e.stopPropagation();
@@ -196,15 +242,16 @@
             // Handle select all checkbox
             $('#select-all-xml').on('change', function() {
                 var isChecked = $(this).is(':checked');
-                $('.xml-feed-toggle').not(this).prop('checked', isChecked);
+                // Only select visible checkboxes
+                $('.xml-feed-toggle:visible').not(this).prop('checked', isChecked);
                 
-                // Get all product IDs
+                // Get all visible product IDs
                 var productIds = [];
-                $('.xml-feed-toggle').not(this).each(function() {
+                $('.xml-feed-toggle:visible').not(this).each(function() {
                     productIds.push($(this).data('id'));
                 });
 
-                // Send POST request for all products
+                // Send POST request for all visible products
                 fetch('/admin/products/xml-feed-add', {
                     method: 'POST',
                     headers: {
@@ -222,30 +269,30 @@
                     if (data.success) {
                         // toastr.success(data.message);
                     } else {
-                        // Revert all checkboxes if failed
-                        $('.xml-feed-toggle').not(this).prop('checked', !isChecked);
+                        // Revert only visible checkboxes if failed
+                        $('.xml-feed-toggle:visible').not(this).prop('checked', !isChecked);
                         // toastr.error(data.message || 'Failed to update XML feed status');
                     }
                 })
                 .catch(error => {
-                    // Revert all checkboxes if failed
-                    $('.xml-feed-toggle').not(this).prop('checked', !isChecked);
+                    // Revert only visible checkboxes if failed
+                    $('.xml-feed-toggle:visible').not(this).prop('checked', !isChecked);
                     // toastr.error('Error updating XML feed status');
                 });
             });
 
             // Handle clear all button
             $('#clear-all-xml').on('click', function() {
-                // Uncheck all checkboxes
-                $('.xml-feed-toggle').prop('checked', false);
+                // Uncheck only visible checkboxes
+                $('.xml-feed-toggle:visible').prop('checked', false);
                 
-                // Get all product IDs
+                // Get all visible product IDs
                 var productIds = [];
-                $('.xml-feed-toggle').not('#select-all-xml').each(function() {
+                $('.xml-feed-toggle:visible').not('#select-all-xml').each(function() {
                     productIds.push($(this).data('id'));
                 });
 
-                // Send POST request to remove all XML feeds
+                // Send POST request to remove all visible XML feeds
                 fetch('/admin/products/xml-feed-add-clear', {
                     method: 'get',
                     headers: {
@@ -260,14 +307,14 @@
                     if (data.success) {
                         // toastr.success(data.message);
                     } else {
-                        // Revert checkboxes if failed
-                        $('.xml-feed-toggle').prop('checked', true);
+                        // Revert only visible checkboxes if failed
+                        $('.xml-feed-toggle:visible').prop('checked', true);
                         // toastr.error(data.message || 'Failed to clear XML feed status');
                     }
                 })
                 .catch(error => {
-                    // Revert checkboxes if failed
-                    $('.xml-feed-toggle').prop('checked', true);
+                    // Revert only visible checkboxes if failed
+                    $('.xml-feed-toggle:visible').prop('checked', true);
                     // toastr.error('Error clearing XML feed status');
                 });
             });

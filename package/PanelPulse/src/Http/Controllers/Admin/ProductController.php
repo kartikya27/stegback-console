@@ -20,9 +20,41 @@ class ProductController extends Controller
 
     public function index()
     {
-        $products =  Product::with('descriptions', 'images','prices','sellers','xml_data')->get()->toArray();
+        $products = Product::with('descriptions', 'product_categories', 'images', 'prices', 'sellers', 'xml_data')->get()->toArray();
+        
+        // Collect unique categories with IDs
+        $categories = collect($products)
+            ->pluck('product_categories.*')
+            ->flatten(1)
+            ->unique('id')
+            ->map(function($category) {
+                return [
+                    'id' => $category['id'],
+                    'name' => $category['name']
+                ];
+            })
+            ->values()
+            ->toArray();
 
-        return view('PanelPulse::admin.products.list',['products' => $products]);
+        // Collect unique sellers with IDs
+        $sellers = collect($products)
+            ->pluck('sellers')
+            ->unique('id')
+            ->map(function($seller) {
+                return [
+                    'id' => $seller['id'],
+                    'name' => $seller['seller_name']
+                ];
+            })
+            ->values()
+            ->toArray();
+
+        // dd($categories,$sellers);
+        return view('PanelPulse::admin.products.list', [
+            'products' => $products,
+            'categories' => $categories,
+            'sellers' => $sellers
+        ]);
     }
 
     public function delete($id)
